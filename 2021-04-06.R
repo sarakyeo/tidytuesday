@@ -1,17 +1,4 @@
 
-# Functions ---------------------------------------------------------------
-print_descr <- function(x){
-  min = min(x, na.rm = TRUE)
-  max = max(x, na.rm = TRUE)
-  mean = mean(x, na.rm = TRUE)
-  stdev = sd(x, na.rm = TRUE)
-  print(tibble("min" = min,
-               "max" = max,
-               "M" = mean,
-               "SD" = stdev))
-}
-
-
 # Load packages and data --------------------------------------------------
 library(tidyverse)
 library(magrittr)
@@ -24,29 +11,51 @@ setwd(root_proj_path)
 
 raw <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-04-06/vegetable_oil.csv")
 
-# Attempt to tidy data for MYS and USA --------------------------------------------
+# Plot for Malaysia --------------------------------------------
 mys <- raw %>% 
   filter(., code == "MYS") # selects only data for MYS
 
+mys %<>%
+  rowwise() %>% 
+  mutate(prodmil = production/1e6)
+
 mys %>% 
-  drop_na(production) %>% 
-  count(crop_oil, wt = production)
+  drop_na(prodmil) %>% 
+  count(crop_oil, wt = prodmil)
 
-p.my <- mys %>% 
+p.my <- mys %>%
+  drop_na(prodmil) %>% 
   filter(., crop_oil == c("Palm", "Palm kernel", "Coconut (copra)")) %>% 
-  ggplot(., aes(x = year, y = production)) +
-  geom_point(aes(color = crop_oil))
+  ggplot(., aes(x = year, y = prodmil, color = crop_oil)) +
+  geom_point() +
+  theme_bw() +
+  labs(x = "", y = "Oil production in million tonnes", color = "") +
+  scale_x_continuous(breaks = seq(1961, 2014, 5),
+                     labels = seq(1961, 2014, 5))
 
+
+# Plot for USA ------------------------------------------------------------
 usa <- raw %>% 
   filter(., code == "USA")
 
+usa %<>% 
+  rowwise() %>% 
+  mutate(prodmil = production/1e6)
+
 usa %>% 
-  drop_na(production) %>% 
-  count(crop_oil, wt = production)
-
-p.usa <- usa %>% 
-  filter(., crop_oil == c("Soybean","Maize", "Cottonseed")) %>%
-  ggplot(., aes(x = year, y = production, color = crop_oil)) +
-  geom_point()
-
+  drop_na(prodmil) %>% 
+  count(crop_oil, wt = prodmil)
+  
+p.usa <- usa %>%
+  drop_na(prodmil) %>% 
+  filter(., crop_oil == c("Soybean", "Maize", "Cottonseed")) %>% 
+  ggplot(., aes(x = year, y = prodmil, color = crop_oil)) +
+  geom_point() +
+  theme_bw() +
+  labs(x = "", y = "Oil production in million tonnes", color = "") +
+  scale_x_continuous(breaks = seq(1961, 2014, 5),
+                     labels = seq(1961, 2014, 5)) +
+  scale_y_continuous(breaks = seq(0, 20, 5),
+                     limits = c(0, 20),
+                     labels = seq(0, 20, 5))
 
