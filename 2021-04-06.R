@@ -35,7 +35,7 @@ p.my <- mys %>%
   theme(legend.position = c(.2, .9)) +
   theme(legend.background = element_blank()) +
   labs(x = "", y = "Oil production in million tonnes", color = "",
-       title = "Malaysia", caption = "") +
+       title = "Malaysia") +
   scale_x_continuous(breaks = seq(1961, 2014, 5),
                      labels = seq(1961, 2014, 5)) +
   scale_y_continuous(breaks = seq(0, 20, 5),
@@ -64,8 +64,7 @@ p.usa <- usa %>%
   scale_color_manual(values = wes_palette(n = 3, name = "Darjeeling1")) +
   theme(legend.position = c(.2, .9)) +
   theme(legend.background = element_blank()) +
-  labs(x = "", y = "", color = "", title = "USA",
-       caption = "Data: Our World in Data | Plot: @sarakyeo") +
+  labs(x = "", y = "", color = "", title = "USA") +
   scale_x_continuous(breaks = seq(1961, 2014, 5),
                      labels = seq(1961, 2014, 5)) +
   scale_y_continuous(breaks = seq(0, 20, 5),
@@ -74,8 +73,14 @@ p.usa <- usa %>%
 
 
 # Arrange plots -----------------------------------------------------------
-ggarrange(p.my, p.usa,
+p <- ggarrange(p.my, p.usa,
           nrow = 1,
           ncol = 2)
 ## Need to learn how to use facets...  
   
+annotate_figure(p,
+                top = text_grob("Top three crops used in vegetable oil production in Malaysia and the US",
+                face = "bold",
+                size = 16),
+                bottom = text_grob("Data: Our World in Data | Plot: @sarakyeo",
+                                   hjust = 1, x = 1, size = 10))
