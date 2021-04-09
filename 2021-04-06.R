@@ -48,3 +48,5 @@ p.usa <- usa %>%
   filter(., crop_oil == c("Soybean","Maize", "Cottonseed")) %>%
   ggplot(., aes(x = year, y = production, color = crop_oil)) +
   geom_point()
+
+
